@@ -1,0 +1,22 @@
+<?php
+require_once 'Database.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $employee_id = $_POST['employee_id'];
+    
+    $stmt = $pdo->prepare('SELECT * FROM employees WHERE employee_id = ?');
+    $stmt->execute([$employee_id]);
+    $current_employee = $stmt->fetch();
+    
+    $name = $_POST['name'] ?: $current_employee['name'];
+    $surname = $_POST['surname'] ?: $current_employee['surname'];
+    $job = $_POST['job'] ?: $current_employee['job'];
+    $wage = $_POST['wage'] ?: $current_employee['wage'];
+    $room = $_POST['room'] ?: $current_employee['room'];
+    
+    $stmt = $pdo->prepare('UPDATE employees SET name = ?, surname = ?, job = ?, wage = ?, room = ? WHERE employee_id = ?');
+    $stmt->execute([$name, $surname, $job, $wage, $room, $employee_id]);
+
+    header('Location: employee_details.php?id=' . $employee_id);
+    exit;
+} ?>
